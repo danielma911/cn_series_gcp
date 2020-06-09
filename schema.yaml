@@ -1,0 +1,136 @@
+application_api_version: v1beta1
+properties:
+  name:
+    type: string
+    title: Specify the Application Name to use
+    x-google-marketplace:
+      type: NAME
+      
+  namespace:
+    type: string
+    default: $NAMESPACE
+    title: Specify the namespace to install
+    x-google-marketplace:
+      type: NAMESPACE
+
+  panoramaIPAddress:
+    type: string
+    title: Specify the Public IP Address of the Panorama
+    maxLength: 128
+
+  panoramaCGNAME:
+    type: string
+    title: SPlease input the Panorama Collector Group Name
+    maxLength: 128
+
+  panoramaAuthCode:
+    type: string
+    title: Please input the Panorama Auth Code for registration
+    maxLength: 256
+
+  panoramaDevGroup:
+    type: string
+    title: Specify the Panorama Device Group Info
+    maxLength: 128
+
+  panoramaTemplate:
+    type: string
+    title: Specify the Panorama Template
+    maxLength: 128
+
+  pluginImageName:
+    type: string
+    default: $REGISTRY:$TAG_plugin
+    x-google-marketplace:
+      type: IMAGE
+      image:
+        generatedProperties:
+          splitByColon:
+            before: pluginImageRepo
+            after: pluginImageTag
+
+  pluginsa:
+    type: string
+    title: Service account used by the pan plugin
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        roles:
+        - type: ClusterRole
+          rulesType: CUSTOM
+          rules:
+            - apiGroups: [""]
+              resources: ["pods", "endpoints", "nodes", "services", "secrets"]
+              verbs: ["list"]
+            - apiGroups: [""]
+              resources: ["pods", "services"]
+              verbs: ["watch"]
+
+  panfwsa:
+    type: string
+    title: Service account used by the pan ngfw
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        roles:
+        - type: ClusterRole
+          rulesType: CUSTOM
+          rules:
+            - apiGroups: ["*"]
+              resources: ["secrets", "certificatesigningrequests", "certificatesigningrequests/approval", "certificatesigningrequests/status"]
+              verbs: ["*"]
+            - apiGroups: [""]
+              resources: ["configmaps", "endpoints", "persistentvolumeclaims", "pods", "replicationcontrollers", "replicationcontrollers/scale", "serviceaccounts", "services"]
+              verbs: ["get", "list", "watch"] 
+            - apiGroups: [""]
+              resources: ["bindings", "events", "limitranges", "namespaces/status", "pods/log", "pods/status", "replicationcontrollers/status", "resourcequotas", "resourcequotas/status"]
+              verbs: ["get", "list", "watch"]  
+            - apiGroups: [""]
+              resources: ["namespaces"]
+              verbs: ["get", "list", "watch"]
+            - apiGroups: ["apps"]
+              resources: ["controllerrevisions", "daemonsets", "deployments", "deployments/scale", "replicasets", "replicasets/scale", "statefulsets", "statefulsets/scale"]
+              verbs: ["get", "list", "watch"]   
+            - apiGroups: ["autoscaling"]
+              resources: ["horizontalpodautoscalers"]
+              verbs: ["get", "list", "watch"]   
+            - apiGroups: ["batch"]
+              resources: ["cronjobs", "jobs"]
+              verbs: ["get", "list", "watch"]   
+            - apiGroups: ["extensions"]
+              resources: ["daemonsets", "deployments", "deployments/scale", "ingresses", "networkpolicies", "replicasets", "replicasets/scale", "replicationcontrollers/scale"]
+              verbs: ["get", "list", "watch"]  
+            - apiGroups: ["policy"]
+              resources: ["poddisruptionbudgets"]
+              verbs: ["get", "list", "watch"]
+            - apiGroups: ["networking.k8s.io"]
+              resources: ["networkpolicies"]
+              verbs: ["get", "list", "watch"]
+
+
+required:
+- name
+- namespace
+- pluginImageName 
+- panoramaIPAddress
+- panoramaCGNAME
+- panoramaAuthCode
+- panoramaTemplate
+- panoramaDevGroup
+
+
+form:
+- widget: help
+  description: My arbitrary <i>description</i>
+x-google-marketplace:
+  clusterConstraints:
+    resources:
+    - replicas: 1
+      requests:
+        cpu: 1
+      affinity:
+        simpleNodeAffinity:
+          type: REQUIRE_ONE_NODE_PER_REPLICA
+    istio:
+      type: OPTIONAL 
+

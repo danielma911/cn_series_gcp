@@ -1,0 +1,16 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: pan-node-critical-priority
+value: 1000000000                  # system-cluster-critical - 1
+globalDefault: false
+description: "This priority class should be used for pan-cni and pan-mgmt pods only."
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: pan-cluster-critical-priority
+value: 999999999                  # system-cluster-critical - 2
+globalDefault: false
+description: "This priority class should be used for pan-ngfw pods only."
+

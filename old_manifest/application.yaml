@@ -1,0 +1,48 @@
+---
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: "$name"
+  namespace: "$namespace"
+labels:
+    app.kubernetes.io/name: "$name"
+spec:
+  descriptor:
+    type: PaloAltoNetworksContainerizedNGFW
+    version: '9.2.0'
+    description: |-
+      The Containerized NGFW is composed of a Management Plane (MP) service and a Data Plane (DP) daemonset. 
+      Panorama, the Palo Alto Networks centralized security management platform, is also required 
+      for the deployment of the Containerized NGFW.  
+
+      # Support
+      Details pertaining to community support can be found at: 
+      (https://github.com/PaloAltoNetworks/cn-series-helm).
+    maintainers:
+    - name: Palo Alto Networks Developer Relations 
+      url: https://github.com/PaloAltoNetworks/cn-series-helm
+    links:
+    - description: Getting Started
+      url: https://github.com/PaloAltoNetworks/cn-series-helm
+    notes: |-
+      # Place holder for installation instructions 
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "$name"
+  componentKinds:
+  - group: apps/v1
+    kind: StatefulSet
+  - group: apps/v1
+    kind: DaemonSet
+  - group: v1
+    kind: Service
+  - group: v1
+    kind: ConfigMap
+  - group: v1
+    kind: ServiceAccount
+  - group: policy/v1beta1
+    kind: PodDisruptionBudget
+  - group: v1
+    kind: Secret
+

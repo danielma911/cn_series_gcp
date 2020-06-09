@@ -1,0 +1,75 @@
+application_api_version: v1beta1
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+  appName:
+    type: string
+    title: Specify the app name
+    maxLength: 128
+  securityPolicyApiEndpoint:
+    type: string
+    title: Specify the http or https URL for the security policy endpoint 
+    maxLength: 128
+  securityPolicyApiPort:
+    type: string
+    title: Specify the port number of the security policy endpoint 
+    maxLength: 128
+  pluginImageName:
+    type: string
+    default: $REGISTRY:$TAG_plugin
+    x-google-marketplace:
+      type: IMAGE
+      image:
+        generatedProperties:
+          splitByColon:
+            before: pluginImageRepo
+            after: pluginImageTag
+  managementInitImageName:
+    type: string
+    default: $REGISTRY:$TAG_init
+    x-google-marketplace:
+      type: IMAGE
+      image:
+        generatedProperties:
+          splitByColon:
+            before: managementInitImageRepo
+            after: managementInitImageTag
+  managementInstImageName:
+    type: string
+    default: $REGISTRY:$TAG_mgmt
+    x-google-marketplace:
+      type: IMAGE
+      image:
+        generatedProperties:
+          splitByColon:
+            before: managementInstImageRepo
+            after: managementInstImageTag
+required:
+- name
+- namespace
+- pluginImageName 
+- managementInstImageName
+- managementInitImageName
+- appName 
+- securityPolicyApiEndpoint
+- securityPolicyApiPort
+form:
+- widget: help
+  description: My arbitrary <i>description</i>
+x-google-marketplace:
+  clusterConstraints:
+    resources:
+    - replicas: 1
+      requests:
+        cpu: 1
+      affinity:
+        simpleNodeAffinity:
+          type: REQUIRE_ONE_NODE_PER_REPLICA
+    istio:
+      type: REQUIRED 
